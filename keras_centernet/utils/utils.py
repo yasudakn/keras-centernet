@@ -63,7 +63,7 @@ class COCODrawer:
                  lineType=cv2.LINE_AA)
     return img
 
-  def draw_box(self, img, x1, y1, x2, y2, cl):
+  def draw_box(self, img, x1, y1, x2, y2, score, cl):
     cl = int(cl)
     x1, y1, x2, y2 = int(round(float(x1))), int(round(float(y1))), int(round(float(x2))), int(round(float(y2)))
     h = img.shape[0]
@@ -73,11 +73,12 @@ class COCODrawer:
     # bounding box
     cv2.rectangle(img, (x1, y1), (x2, y2), bgr_color, width)
     # font background
-    font_width = len(name) * self.char_width
+    draw_text = '{} {:.2f}'.format(name, score)
+    font_width = len(draw_text) * self.char_width
     cv2.rectangle(img, (x1 - math.ceil(width / 2), y1 - self.font_size), (x1 + font_width, y1), bgr_color, -1)
     # text
     pil_img = Image.fromarray(img[..., ::-1])
     draw = ImageDraw.Draw(pil_img)
-    draw.text((x1 + width, y1 - self.font_size), name, font=self.font, fill=(0, 0, 0, 255))
+    draw.text((x1 + width, y1 - self.font_size), draw_text, font=self.font, fill=(0, 0, 0, 255))
     img = np.array(pil_img)[..., ::-1].copy()
     return img
